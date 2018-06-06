@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subscribe</title>
+</head>
+<body>
+
+{% block head %}
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript">
+    Stripe.setPublishableKey('');
+
+    var stripeResponseHandler = function(status, response) {
+        var $form = $('#checkout-form');
+
+        if (response.error) {
+            // Show the errors on the form
+            $form.find('.payment-errors').text(response.error.message);
+            $form.find('.payment-errors').addClass('alert');
+            $form.find('.payment-errors').addClass('alert-error');
+            $form.find('button').prop('disabled', false);
+        } else {
+            // token contains id, last4, and card type
+            var token = response.id;
+            // Insert the token into the form so it gets submitted to the server
+            $form.append($('<input type="hidden" name="stripe_token" />').val(token));
+            // and re-submit
+            $form.get(0).submit();
+        }
+    };
+
+    jQuery(function($) {
+        $('#checkout-form').submit(function(e) {
+            var $form = $(this);
+
+            // Disable the submit button to prevent repeated clicks
+            $form.find('button').prop('disabled', true);
+
+            Stripe.createToken($form, stripeResponseHandler);
+
+            // Prevent the form from submitting with the default action
+            return false;
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <form method="post" action="" id="checkout-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="control-label" for="name">Name</label>
+            <div class="controls">
+                <input type="text" id="name" class="form-control" data-stripe="name" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="address_line1">Address Line</label>
+            <div class="controls">
+                <input type="text" id="address_line1" class="form-control" data-stripe="address_line1" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="address_line2">Address Line 2</label>
+            <div class="controls">
+                <input type="text" id="address_line2" class="form-control" data-stripe="address_line2" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="address_city">City</label>
+            <div class="controls">
+                <input type="text" id="address_city" class="form-control" data-stripe="address_city" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="address_state">State</label>
+            <div class="controls">
+                <input type="text" id="address_state" class="form-control" data-stripe="address_state" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="address_zip">Zip</label>
+            <div class="controls">
+                <input type="text" id="address_zip" class="form-control" data-stripe="address_zip" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="address_country">Country</label>
+            <div class="controls">
+                <input type="text" id="address_country" class="form-control" data-stripe="address_country" />
+            </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="card">Card</label>
+          <div class="controls">
+              <input type="text" id="card" class="form-control" data-stripe="number" />
+          </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="">Expiration (MM/YYYY)</label>
+            <div class="row">
+                <div class="col-xs-2">
+                    <input type="text" size="2" data-stripe="exp-month" class="form-control" />
+                </div>
+                <div class="col-xs-2">
+                    <input type="text" size="4" data-stripe="exp-year" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="cvc">CVC</label>
+            <div class="controls">
+                <input type="text" id="cvc" size="4" class="form-control" data-stripe="cvc" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="controls">
+                <input type="submit" value="Checkout" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+</body>
+</html>

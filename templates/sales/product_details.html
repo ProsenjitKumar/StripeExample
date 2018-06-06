@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Details</title>
+</head>
+<body>
+
+{{ products.name }}<br>
+<b>$</b>{{ products.price }}<br>
+<img src="{{ MEDIA_URL }}{{ products.image.url }}"><br>
+<b>Description: </b>{{ products.description }}<br>
+<b>Category: </b>{{ products.category }}<br>
+<b>Stock: </b>{{ products.stock }}<br>
+
+<h1><a href="{% url 'home' %}">Home</a> </h1>
+<h1><a href="{% url 'charge' %}">Add to your card</a> </h1>
+
+</body>
+</html>
